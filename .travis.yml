@@ -39,7 +39,7 @@ script:
   - unset RANLIB
   - unset LD
   - mkdir arm_cross_src && cd arm_cross_src
-  - cd .. && wget -nv https://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VER}.tar.xz && tar Jxf binutils-${BINUTILS_VER}.tar.xz && mkdir build_binutils-${BINUTILS_VER}_arm && cd build_binutils-${BINUTILS_VER}_arm
+  - wget -nv https://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VER}.tar.xz && tar Jxf binutils-${BINUTILS_VER}.tar.xz && mkdir build_binutils-${BINUTILS_VER}_arm && cd build_binutils-${BINUTILS_VER}_arm
   - ../binutils-${BINUTILS_VER}/configure --prefix=${ARM_CROSS_PATH} --program-prefix=${CROSS_COMPILER} --target=${HOST} --enable-lto --enable-interwork --disable-multilib --with-arch=${ARCH_FULL}
   - make -j4 >/dev/null && make install
   - cd .. && wget -nv https://www.kernel.org/pub/linux/kernel/v${KERNEL_VER}/linux-${KERNEL_VER_FULL}.tar.xz && tar Jxf linux-${KERNEL_VER_FULL}.tar.xz && cd linux-${KERNEL_VER_FULL}
