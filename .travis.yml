@@ -31,13 +31,15 @@ addons:
 
 script:
   - export ARM_CROSS=arm-cross-tools
-  - export ARM_CROSS_PATH=${TRAVIS_BUILD_DIR}/${ARM_CROSS}
+  - export ARM_CROSS_PATH=/usr/loca/${ARM_CROSS}
   - export PATH=$PATH:${ARM_CROSS_PATH}/bin
   - unset CC
   - unset CXX
   - unset AR
   - unset RANLIB
   - unset LD
+  - sudo mkdir -p ${ARM_CROSS_PATH}
+  - sudo chown travis ${ARM_CROSS_PATH}
   - mkdir arm_cross_src && cd arm_cross_src
   - wget -nv https://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VER}.tar.xz && tar Jxf binutils-${BINUTILS_VER}.tar.xz && mkdir build_binutils-${BINUTILS_VER}_arm && cd build_binutils-${BINUTILS_VER}_arm
   - ../binutils-${BINUTILS_VER}/configure --prefix=${ARM_CROSS_PATH} --program-prefix=${CROSS_COMPILER} --target=${HOST} --enable-lto --enable-interwork --disable-multilib --with-arch=${ARCH_FULL}
@@ -67,9 +69,11 @@ script:
   - cd ../../
 
 after_success:
-  - mkdir pkg
-  - tar czf pkg/${HOST}.tar.gz --no-same-owner --no-same-permissions ${ARM_CROSS}
+  - cd /usr/local
+  - sudo mkdir pkg_arm
+  - sudo chown travis pkg_arm
+  - tar czf pkg_arm/${HOST}.tar.gz --no-same-owner --no-same-permissions ${ARM_CROSS}
   - if [ "$TRAVIS_TAG" != "" ]; then
       go get github.com/tcnksm/ghr;
-      ghr --username s520 --token $GITHUB_TOKEN --replace --prerelease $TRAVIS_TAG pkg/;
+      ghr --username s520 --token $GITHUB_TOKEN --replace --prerelease $TRAVIS_TAG pkg_arm/;
     fi
