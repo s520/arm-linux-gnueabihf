@@ -75,5 +75,5 @@ after_success:
   - tar czf pkg_arm/${HOST}.tar.gz --no-same-owner --no-same-permissions ${ARM_CROSS}
   - if [ "$TRAVIS_TAG" != "" ]; then
       go get github.com/tcnksm/ghr;
-      ghr --username s520 --token $GITHUB_TOKEN --replace --prerelease $TRAVIS_TAG pkg_arm/;
+      ghr --username s520 -r arm-linux-gnueabihf --token $GITHUB_TOKEN --replace --prerelease $TRAVIS_TAG pkg_arm/;
     fi
