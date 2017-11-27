@@ -31,7 +31,7 @@ addons:
 
 script:
   - export ARM_CROSS=arm-cross-tools
-  - export ARM_CROSS_PATH=/usr/loca/${ARM_CROSS}
+  - export ARM_CROSS_PATH=/usr/local/${ARM_CROSS}
   - export PATH=$PATH:${ARM_CROSS_PATH}/bin
   - unset CC
   - unset CXX
