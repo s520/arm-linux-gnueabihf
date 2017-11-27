@@ -30,46 +30,46 @@ addons:
       - ubuntu-toolchain-r-test
 
 script:
-  export ARM_CROSS=arm-cross-tools
-  export ARM_CROSS_PATH=${TRAVIS_BUILD_DIR}/${ARM_CROSS}
-  export PATH=$PATH:${ARM_CROSS_PATH}/bin
-  unset CC
-  unset CXX
-  unset AR
-  unset RANLIB
-  unset LD
-  mkdir arm_cross_src && cd arm_cross_src
-  cd .. && wget -nv https://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VER}.tar.xz && tar Jxf binutils-${BINUTILS_VER}.tar.xz && mkdir build_binutils-${BINUTILS_VER}_arm && cd build_binutils-${BINUTILS_VER}_arm
-  ../binutils-${BINUTILS_VER}/configure --prefix=${ARM_CROSS_PATH} --program-prefix=${CROSS_COMPILER} --target=${HOST} --enable-lto --enable-interwork --disable-multilib --with-arch=${ARCH_FULL}
-  make -j4 >/dev/null && make install
-  cd .. && wget -nv https://www.kernel.org/pub/linux/kernel/v${KERNEL_VER}/linux-${KERNEL_VER_FULL}.tar.xz && tar Jxf linux-${KERNEL_VER_FULL}.tar.xz && cd linux-${KERNEL_VER_FULL}
-  make ARCH=${ARCH} INSTALL_HDR_PATH=${ARM_CROSS_PATH}/${HOST} headers_install
-  cd .. && wget -nv ftp://ftp.gnu.org/gnu/gmp/gmp-${GMP_VER}.tar.xz && tar Jxf gmp-${GMP_VER}.tar.xz
-  wget -nv http://www.mpfr.org/mpfr-current/mpfr-${MPFR_VER}.tar.xz && tar Jxf mpfr-${MPFR_VER}.tar.xz
-  wget -nv ftp://ftp.gnu.org/gnu/mpc/mpc-${MPC_VER}.tar.gz && tar zxf mpc-${MPC_VER}.tar.gz
-  wget -nv http://isl.gforge.inria.fr/isl-${ISL_VER}.tar.xz && tar Jxf isl-${ISL_VER}.tar.xz
-  wget -nv https://www.bastoul.net/cloog/pages/download/cloog-${CLOOG_VER}.tar.gz && tar zxf cloog-${CLOOG_VER}.tar.gz
-  wget -nv https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VER}/gcc-${GCC_VER}.tar.bz2 && tar jxf gcc-${GCC_VER}.tar.bz2 && cd gcc-${GCC_VER}
-  ln -s ../gmp-${GMP_VER} gmp
-  ln -s ../mpfr-${MPFR_VER} mpfr
-  ln -s ../mpc-${MPC_VER} mpc
-  ln -s ../isl-${ISL_VER} isl
-  ln -s ../cloog-${CLOOG_VER} cloog
-  cd .. && mkdir build_gcc-${GCC_VER}_arm && cd build_gcc-${GCC_VER}_arm
-  ../gcc-${GCC_VER}/configure --prefix=${ARM_CROSS_PATH} --program-prefix=${CROSS_COMPILER} --target=${HOST} --enable-lto --enable-languages=c,c++ --disable-multilib --enable-interwork --with-arch=${ARCH_FULL} --with-fpu=vfp --with-float=hard --enable-checking=release --enable-linker-build-id --enable-gnu-unique-object --enable-threads=posix --disable-sjlj-exceptions --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes
-  make -j4 all-gcc >/dev/null && make install-gcc
-  cd .. && wget -nv https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz && tar Jxf glibc-${GLIBC_VER}.tar.xz && mkdir build_glibc-${GLIBC_VER}_arm && cd build_glibc-${GLIBC_VER}_arm
-  ../glibc-${GLIBC_VER}/configure --prefix=${ARM_CROSS_PATH}/${HOST} --build=${MACHTYPE} --host=${HOST} --target=${HOST} --with-headers=${ARM_CROSS_PATH}/${HOST}/include --disable-multilib --enable-add-ons libc_cv_forced_unwind=yes
-  make install-bootstrap-headers=yes install-headers >/dev/null && make -j4 csu/subdir_lib && install csu/crt1.o csu/crti.o csu/crtn.o ${ARM_CROSS_PATH}/${HOST}/lib && ${CROSS_COMPILER}gcc -nostdlib -nostartfiles -shared -x c /dev/null -o ${ARM_CROSS_PATH}/${HOST}/lib/libc.so && touch ${ARM_CROSS_PATH}/${HOST}/include/gnu/stubs.h
-  cd ../build_gcc-${GCC_VER}_arm && make -j4 all-target-libgcc >/dev/null && make install-target-libgcc
-  cd ../build_glibc-${GLIBC_VER}_arm && make -j4 >/dev/null && make install
-  cd ../build_gcc-${GCC_VER}_arm && make -j4 >/dev/null && make install
-  cd ../../
+  - export ARM_CROSS=arm-cross-tools
+  - export ARM_CROSS_PATH=${TRAVIS_BUILD_DIR}/${ARM_CROSS}
+  - export PATH=$PATH:${ARM_CROSS_PATH}/bin
+  - unset CC
+  - unset CXX
+  - unset AR
+  - unset RANLIB
+  - unset LD
+  - mkdir arm_cross_src && cd arm_cross_src
+  - cd .. && wget -nv https://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VER}.tar.xz && tar Jxf binutils-${BINUTILS_VER}.tar.xz && mkdir build_binutils-${BINUTILS_VER}_arm && cd build_binutils-${BINUTILS_VER}_arm
+  - ../binutils-${BINUTILS_VER}/configure --prefix=${ARM_CROSS_PATH} --program-prefix=${CROSS_COMPILER} --target=${HOST} --enable-lto --enable-interwork --disable-multilib --with-arch=${ARCH_FULL}
+  - make -j4 >/dev/null && make install
+  - cd .. && wget -nv https://www.kernel.org/pub/linux/kernel/v${KERNEL_VER}/linux-${KERNEL_VER_FULL}.tar.xz && tar Jxf linux-${KERNEL_VER_FULL}.tar.xz && cd linux-${KERNEL_VER_FULL}
+  - make ARCH=${ARCH} INSTALL_HDR_PATH=${ARM_CROSS_PATH}/${HOST} headers_install
+  - cd .. && wget -nv ftp://ftp.gnu.org/gnu/gmp/gmp-${GMP_VER}.tar.xz && tar Jxf gmp-${GMP_VER}.tar.xz
+  - wget -nv http://www.mpfr.org/mpfr-current/mpfr-${MPFR_VER}.tar.xz && tar Jxf mpfr-${MPFR_VER}.tar.xz
+  - wget -nv ftp://ftp.gnu.org/gnu/mpc/mpc-${MPC_VER}.tar.gz && tar zxf mpc-${MPC_VER}.tar.gz
+  - wget -nv http://isl.gforge.inria.fr/isl-${ISL_VER}.tar.xz && tar Jxf isl-${ISL_VER}.tar.xz
+  - wget -nv https://www.bastoul.net/cloog/pages/download/cloog-${CLOOG_VER}.tar.gz && tar zxf cloog-${CLOOG_VER}.tar.gz
+  - wget -nv https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VER}/gcc-${GCC_VER}.tar.bz2 && tar jxf gcc-${GCC_VER}.tar.bz2 && cd gcc-${GCC_VER}
+  - ln -s ../gmp-${GMP_VER} gmp
+  - ln -s ../mpfr-${MPFR_VER} mpfr
+  - ln -s ../mpc-${MPC_VER} mpc
+  - ln -s ../isl-${ISL_VER} isl
+  - ln -s ../cloog-${CLOOG_VER} cloog
+  - cd .. && mkdir build_gcc-${GCC_VER}_arm && cd build_gcc-${GCC_VER}_arm
+  - ../gcc-${GCC_VER}/configure --prefix=${ARM_CROSS_PATH} --program-prefix=${CROSS_COMPILER} --target=${HOST} --enable-lto --enable-languages=c,c++ --disable-multilib --enable-interwork --with-arch=${ARCH_FULL} --with-fpu=vfp --with-float=hard --enable-checking=release --enable-linker-build-id --enable-gnu-unique-object --enable-threads=posix --disable-sjlj-exceptions --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes
+  - make -j4 all-gcc >/dev/null && make install-gcc
+  - cd .. && wget -nv https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz && tar Jxf glibc-${GLIBC_VER}.tar.xz && mkdir build_glibc-${GLIBC_VER}_arm && cd build_glibc-${GLIBC_VER}_arm
+  - ../glibc-${GLIBC_VER}/configure --prefix=${ARM_CROSS_PATH}/${HOST} --build=${MACHTYPE} --host=${HOST} --target=${HOST} --with-headers=${ARM_CROSS_PATH}/${HOST}/include --disable-multilib --enable-add-ons libc_cv_forced_unwind=yes
+  - make install-bootstrap-headers=yes install-headers >/dev/null && make -j4 csu/subdir_lib && install csu/crt1.o csu/crti.o csu/crtn.o ${ARM_CROSS_PATH}/${HOST}/lib && ${CROSS_COMPILER}gcc -nostdlib -nostartfiles -shared -x c /dev/null -o ${ARM_CROSS_PATH}/${HOST}/lib/libc.so && touch ${ARM_CROSS_PATH}/${HOST}/include/gnu/stubs.h
+  - cd ../build_gcc-${GCC_VER}_arm && make -j4 all-target-libgcc >/dev/null && make install-target-libgcc
+  - cd ../build_glibc-${GLIBC_VER}_arm && make -j4 >/dev/null && make install
+  - cd ../build_gcc-${GCC_VER}_arm && make -j4 >/dev/null && make install
+  - cd ../../
 
 after_success:
-  mkdir pkg
-  tar czf pkg/${ARM_CROSS}.tar.gz --no-same-owner --no-same-permissions ${ARM_CROSS}
-  if [ "$TRAVIS_TAG" != "" ]; then
-    go get github.com/tcnksm/ghr;
-    ghr --username s520 --token $GITHUB_TOKEN --replace --prerelease $TRAVIS_TAG pkg/;
-  fi
+  - mkdir pkg
+  - tar czf pkg/${HOST}.tar.gz --no-same-owner --no-same-permissions ${ARM_CROSS}
+  - if [ "$TRAVIS_TAG" != "" ]; then
+      go get github.com/tcnksm/ghr;
+      ghr --username s520 --token $GITHUB_TOKEN --replace --prerelease $TRAVIS_TAG pkg/;
+    fi
