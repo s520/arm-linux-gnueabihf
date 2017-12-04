@@ -7,15 +7,14 @@ cache:
 env:
   global:
     - GMP_VER=6.1.2
-    - MPFR_VER=3.1.6
+    - MPFR_VER=3.1.5
     - MPC_VER=1.0.3
-    - ISL_VER=0.18
-    - CLOOG_VER=0.18.4
-    - BINUTILS_VER=2.29.1
+    - ISL_VER=0.16.1
+    - BINUTILS_VER=2.28
     - KERNEL_VER=4.x
-    - KERNEL_VER_FULL=4.9.41
-    - GCC_VER=6.3.0
-    - GLIBC_VER=2.26
+    - KERNEL_VER_FULL=4.9.20
+    - GCC_VER=6.3-2017.02
+    - GLIBC_VER=2.25
     - HOST=arm-linux-gnueabihf
     - CROSS_COMPILER=arm-linux-gnueabihf-
     - ARCH=arm
@@ -50,22 +49,20 @@ script:
   - wget -nv http://www.mpfr.org/mpfr-current/mpfr-${MPFR_VER}.tar.xz && tar Jxf mpfr-${MPFR_VER}.tar.xz
   - wget -nv ftp://ftp.gnu.org/gnu/mpc/mpc-${MPC_VER}.tar.gz && tar zxf mpc-${MPC_VER}.tar.gz
   - wget -nv http://isl.gforge.inria.fr/isl-${ISL_VER}.tar.xz && tar Jxf isl-${ISL_VER}.tar.xz
-  - wget -nv https://www.bastoul.net/cloog/pages/download/cloog-${CLOOG_VER}.tar.gz && tar zxf cloog-${CLOOG_VER}.tar.gz
-  - wget -nv https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VER}/gcc-${GCC_VER}.tar.bz2 && tar jxf gcc-${GCC_VER}.tar.bz2 && cd gcc-${GCC_VER}
+  - wget -nv https://releases.linaro.org/components/toolchain/gcc-linaro/${GCC_VER}/gcc-linaro-${GCC_VER}.tar.xz && tar Jxf gcc-linaro-${GCC_VER}.tar.xz && cd gcc-linaro-${GCC_VER}
   - ln -s ../gmp-${GMP_VER} gmp
   - ln -s ../mpfr-${MPFR_VER} mpfr
   - ln -s ../mpc-${MPC_VER} mpc
   - ln -s ../isl-${ISL_VER} isl
-  - ln -s ../cloog-${CLOOG_VER} cloog
-  - cd .. && mkdir build_gcc-${GCC_VER}_arm && cd build_gcc-${GCC_VER}_arm
-  - ../gcc-${GCC_VER}/configure --prefix=${ARM_CROSS_PATH} --program-prefix=${CROSS_COMPILER} --target=${HOST} --enable-lto --enable-languages=c,c++ --disable-multilib --enable-interwork --with-arch=${ARCH_FULL} --with-fpu=vfp --with-float=hard --enable-checking=release --enable-linker-build-id --enable-gnu-unique-object --enable-threads=posix --disable-sjlj-exceptions --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes
+  - cd .. && mkdir build_gcc-linaro-${GCC_VER}_arm && cd build_gcc-linaro-${GCC_VER}_arm
+  - ../gcc-linaro-${GCC_VER}/configure --prefix=${ARM_CROSS_PATH} --program-prefix=${CROSS_COMPILER} --target=${HOST} --enable-lto --enable-languages=c,c++ --disable-multilib --enable-interwork --with-arch=${ARCH_FULL} --with-fpu=vfp --with-float=hard --enable-checking=release --enable-linker-build-id --enable-gnu-unique-object --enable-threads=posix --disable-sjlj-exceptions --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes
   - make -j4 all-gcc >/dev/null && make install-gcc
   - cd .. && wget -nv https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz && tar Jxf glibc-${GLIBC_VER}.tar.xz && mkdir build_glibc-${GLIBC_VER}_arm && cd build_glibc-${GLIBC_VER}_arm
   - ../glibc-${GLIBC_VER}/configure --prefix=${ARM_CROSS_PATH}/${HOST} --build=${MACHTYPE} --host=${HOST} --target=${HOST} --with-headers=${ARM_CROSS_PATH}/${HOST}/include --disable-multilib --enable-add-ons libc_cv_forced_unwind=yes
   - make install-bootstrap-headers=yes install-headers >/dev/null && make -j4 csu/subdir_lib && install csu/crt1.o csu/crti.o csu/crtn.o ${ARM_CROSS_PATH}/${HOST}/lib && ${CROSS_COMPILER}gcc -nostdlib -nostartfiles -shared -x c /dev/null -o ${ARM_CROSS_PATH}/${HOST}/lib/libc.so && touch ${ARM_CROSS_PATH}/${HOST}/include/gnu/stubs.h
-  - cd ../build_gcc-${GCC_VER}_arm && make -j4 all-target-libgcc >/dev/null && make install-target-libgcc
+  - cd ../build_gcc-linaro-${GCC_VER}_arm && make -j4 all-target-libgcc >/dev/null && make install-target-libgcc
   - cd ../build_glibc-${GLIBC_VER}_arm && make -j4 >/dev/null && make install
-  - cd ../build_gcc-${GCC_VER}_arm && make -j4 >/dev/null && make install
+  - cd ../build_gcc-linaro-${GCC_VER}_arm && make -j4 >/dev/null && make install
   - cd ../../
 
 after_success:

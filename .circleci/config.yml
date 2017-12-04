@@ -1,0 +1,28 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: ubuntu:trusty
+    working_directory: /root/project/
+    branches:
+      ignore:
+        - master
+    steps:
+      - checkout
+      - run: apt-get update && apt-get install -y software-properties-common && apt-add-repository -y "ppa:ubuntu-toolchain-r/test"
+      - run: apt-get update && apt-get install -y wget gperf bison flex help2man libtool python-dev automake libncurses5-dev texinfo lzma gawk cvs patch build-essential golang-1.6
+      - run: wget -nv http://crosstool-ng.org/download/crosstool-ng/crosstool-ng-1.23.0.tar.xz && tar Jxf crosstool-ng-1.23.0.tar.xz
+      - run: cd crosstool-ng-1.23.0 && ./configure
+      - run: cd crosstool-ng-1.23.0 && make && make install
+      - run: ./circleci.sh
+      - run: cd ${HOME}/x-tools && mkdir pkg_arm && tar czf pkg_arm/arm-linux-gnueabihf-crosstool-ng.tar.gz --no-same-owner --no-same-permissions arm-linux-gnueabihf
+      - deploy:
+          command: |
+            if [ "${CIRCLE_TAG}" != "" ]; then
+              cd ${HOME}/x-tools
+              go get github.com/tcnksm/ghr
+              ghr --username s520 -r arm-linux-gnueabihf --token $GITHUB_TOKEN --replace --prerelease ${CIRCLE_TAG} pkg_arm/
+            fi
+deployment:
+  trigger_tag:
+    tag: /.*/
